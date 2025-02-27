@@ -1,18 +1,24 @@
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
+import { AuthResponse } from "../types";
 
-export const loginService = async(username:string, password:string) => {
-    try{
-        const response = await axios.post("http://localhost:8080/login", {
+/**
+ * 
+ * Funcion que realiza la peticion de login
+ * @param username 
+ * @param password 
+ */
+export const loginService = async(username:string, password:string):Promise<AuthResponse> => {
+    
+    new Promise<AuthResponse>((resolve, reject) => {
+        axios.post("http://localhost:8080/login", {
             username,
             password
-        }) 
-        console.log("Response: ", response.data);
-    
-        return response.data?.token || null;
-    }catch(error){
-        console.log("Error al acceder al token: ", error);
-        
-    }
-    
-    
+        })
+        .then((response: AxiosResponse<AuthResponse>) => resolve(response.data))
+        .catch((error) => reject(error))
+        // .catch(()=>{
+        //     throw new Error("Algo falló al iniciar sesión")}
+        // )
+    })
+
 }
