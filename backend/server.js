@@ -51,8 +51,8 @@ app.post('/login', async (req, res) => {
 
   res.cookie('authToken', token, {
     httpOnly: false,
-    // secure: true, // Solo HTTPS en producción
-    secure: false, // Solo HTTPS en producción
+    secure: true, // Solo HTTPS en producción
+    // secure: false, // Solo HTTPS en producción
     sameSite: 'Strict',
     maxAge: 3600000, // 1 hora
   });

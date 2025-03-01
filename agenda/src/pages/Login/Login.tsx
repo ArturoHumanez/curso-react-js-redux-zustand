@@ -1,45 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {useNavigate} from 'react-router-dom'
-import { loginService } from '../../services/auth.service';
-import './Login.css'
+import './Login.css';
+import { useAuthStore } from '../../store/authStore';
 
-import {loginAction} from '../../state/actions/AuthAction'
-import { useSelector, useDispatch} from 'react-redux'
+const Login: React.FC = () => {
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string | null>(null);
 
-const Login: React.FC = ()=> {
+    const navigate = useNavigate()
 
-    const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>("");
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+    const loginAction = useAuthStore((state) => state.login)
 
-    const isAuhenticated = useSelector((state) => state.Auth.isAuthenticated)
-    const dispatch = useDispatch();
-    //useEffect checa cambios
     useEffect(() => {
-        if (isAuhenticated) {
+        if (isAuthenticated) {
             navigate('/home')
         }
-    }, [isAuhenticated, navigate]);
-    
-    const handleSubmit = async(event: React.FormEvent) =>{
-        event.preventDefault(); //Evitar que recargue página
+    }, [isAuthenticated, navigate]);
 
-        dispatch(loginAction(username, password));
-        // loginService(username, password)
-        //     .then((response)=>{
-        //         if(response && response.status === 200)
-        //             navigate('/home');
-        //         else
-        //             setError("Usuario o contraseña incorrectos");
-        //     })
-        //     .catch((error) => {
-        //         setError(`${error}`);
-        //     })
-        // localStorage.setItem("token", response);
-
-
-    }
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        loginAction(username, password)
+    };
 
   return (
     <div>
@@ -54,7 +37,9 @@ const Login: React.FC = ()=> {
                 onChange={(e) => setPassword(e.target.value)} />
             <button type="submit">Iniciar sesión</button>
         </form>
-    </div>
+
+        <small><a onClick={() => navigate('/register')}>¿No tienes cuenta? Regístrate</a></small>
+        </div>
   )
 }
 
